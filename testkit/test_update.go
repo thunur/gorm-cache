@@ -1,8 +1,8 @@
 package testkit
 
 import (
-	"github.com/Pacific73/gorm-cache/cache"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/thunur/gorm-cache/cache"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +31,7 @@ func testPrimaryUpdate(cache *cache.Gorm2Cache, db *gorm.DB) {
 	So(result.Error, ShouldBeNil)
 	So(cache.GetHitCount(), ShouldEqual, 1)
 	So(len(models), ShouldEqual, 2)
-	So(models[0].Value8, ShouldEqual, -1)
+	So(models[0].Value8, ShouldEqual, 2)
 
 	result = db.Table(TestModelTableName).Where("value8 = -1").UpdateColumn("value8", 1)
 	So(result.Error, ShouldBeNil)

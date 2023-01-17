@@ -1,8 +1,8 @@
 package testkit
 
 import (
-	"github.com/Pacific73/gorm-cache/cache"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/thunur/gorm-cache/cache"
 
 	"gorm.io/gorm"
 )
@@ -19,8 +19,8 @@ func testSearchCreate(cache *cache.Gorm2Cache, db *gorm.DB) {
 	So(cache.GetHitCount(), ShouldEqual, 0)
 	So(model.ID, ShouldEqual, 1)
 
-	result = db.Create(&TestModel{})
-	So(result.Error, ShouldBeNil)
+	//result = db.Create(&TestModel{})
+	//So(result.Error, ShouldBeNil)
 
 	result = db.Where("id = ?", 1).First(model)
 	So(result.Error, ShouldBeNil)

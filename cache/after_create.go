@@ -1,8 +1,8 @@
 package cache
 
 import (
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/Pacific73/gorm-cache/util"
+	"github.com/thunur/gorm-cache/config"
+	"github.com/thunur/gorm-cache/util"
 	"gorm.io/gorm"
 )
 

@@ -3,7 +3,7 @@ package testkit
 import "gorm.io/gorm"
 
 func PrepareTableAndData(db *gorm.DB) error {
-	err := db.Migrator().CreateTable(&TestModel{})
+	err := db.Migrator().AutoMigrate(&TestModel{})
 	if err != nil {
 		return err
 	}

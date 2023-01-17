@@ -3,13 +3,13 @@ package cache
 import (
 	"encoding/json"
 	"errors"
+	"github.com/go-redis/redis/v8"
 	"reflect"
 	"strconv"
 	"strings"
 
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/Pacific73/gorm-cache/util"
-	"github.com/go-redis/redis"
+	"github.com/thunur/gorm-cache/config"
+	"github.com/thunur/gorm-cache/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/callbacks"
 )

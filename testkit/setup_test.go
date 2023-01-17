@@ -1,30 +1,32 @@
 package testkit
 
 import (
+	"context"
 	"fmt"
+	"gorm.io/driver/postgres"
 	"os"
 	"testing"
 
 	"gorm.io/gorm/logger"
 
-	"github.com/Pacific73/gorm-cache/cache"
+	"github.com/thunur/gorm-cache/cache"
 
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/go-redis/redis"
-	"gorm.io/driver/mysql"
+	"github.com/go-redis/redis/v8"
+	"github.com/thunur/gorm-cache/config"
 	"gorm.io/gorm"
 )
 
 var (
-	username     = "root"
-	password     = "Zcydf741205,."
-	databaseName = "site_reldb"
-	ip           = "localhost"
-	port         = "3306"
+	//postgres://postgres:postgres@192.168.31.230:5432/db_info?sslmode=disable
+	username     = "postgres"
+	password     = "postgres"
+	databaseName = "db_info"
+	ip           = "192.168.31.230"
+	port         = "5432"
 )
 
 var (
-	redisIp   = "localhost"
+	redisIp   = "192.168.31.230"
 	redisPort = "6379"
 )
 
@@ -49,9 +51,9 @@ func TestMain(m *testing.M) {
 	var err error
 	//logger.Default.LogMode(logger.Info)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		username, password, ip, port, databaseName)
-	originalDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	originalDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		CreateBatchSize: 1000,
 		Logger:          logger.Default,
 	})
@@ -60,7 +62,17 @@ func TestMain(m *testing.M) {
 		os.Exit(-1)
 	}
 
-	searchDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	searchDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		CreateBatchSize: 1000,
+		Logger:          logger.Default,
+	})
+
+	if err != nil {
+		log("open db error: %v", err)
+		os.Exit(-1)
+	}
+
+	primaryDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		CreateBatchSize: 1000,
 		Logger:          logger.Default,
 	})
@@ -69,7 +81,7 @@ func TestMain(m *testing.M) {
 		os.Exit(-1)
 	}
 
-	primaryDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	allDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		CreateBatchSize: 1000,
 		Logger:          logger.Default,
 	})
@@ -78,26 +90,18 @@ func TestMain(m *testing.M) {
 		os.Exit(-1)
 	}
 
-	allDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		CreateBatchSize: 1000,
-		Logger:          logger.Default,
-	})
-	if err != nil {
-		log("open db error: %v", err)
-		os.Exit(-1)
-	}
-
-	redisClient := redis.NewClient(&redis.Options{Addr: redisIp + ":" + redisPort})
+	redisClient := redis.NewClient(&redis.Options{Addr: redisIp + ":" + redisPort, DB: 1})
 
 	searchCache, err = cache.NewGorm2Cache(&config.CacheConfig{
 		CacheLevel:           config.CacheLevelOnlySearch,
-		CacheStorage:         config.CacheStorageMemory,
+		CacheStorage:         config.CacheStorageRedis,
 		RedisConfig:          cache.NewRedisConfigWithClient(redisClient),
 		InvalidateWhenUpdate: true,
 		CacheTTL:             5000,
 		CacheMaxItemCnt:      5000,
 		CacheSize:            1000,
 		DebugMode:            false,
+		Ctx:                  context.Background(),
 	})
 	if err != nil {
 		log("setup search cache error: %v", err)
@@ -106,13 +110,14 @@ func TestMain(m *testing.M) {
 
 	primaryCache, err = cache.NewGorm2Cache(&config.CacheConfig{
 		CacheLevel:           config.CacheLevelOnlyPrimary,
-		CacheStorage:         config.CacheStorageMemory,
+		CacheStorage:         config.CacheStorageRedis,
 		RedisConfig:          cache.NewRedisConfigWithClient(redisClient),
 		InvalidateWhenUpdate: true,
 		CacheTTL:             5000,
 		CacheMaxItemCnt:      5000,
 		CacheSize:            1000,
 		DebugMode:            false,
+		Ctx:                  context.Background(),
 	})
 	if err != nil {
 		log("setup primary cache error: %v", err)
@@ -121,13 +126,14 @@ func TestMain(m *testing.M) {
 
 	allCache, err = cache.NewGorm2Cache(&config.CacheConfig{
 		CacheLevel:           config.CacheLevelAll,
-		CacheStorage:         config.CacheStorageMemory,
+		CacheStorage:         config.CacheStorageRedis,
 		RedisConfig:          cache.NewRedisConfigWithClient(redisClient),
 		InvalidateWhenUpdate: true,
 		CacheTTL:             5000,
 		CacheMaxItemCnt:      5000,
 		CacheSize:            1000,
-		DebugMode:            false,
+		DebugMode:            true,
+		Ctx:                  context.Background(),
 	})
 	if err != nil {
 		log("setup all cache error: %v", err)

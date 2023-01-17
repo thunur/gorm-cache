@@ -1,5 +1,7 @@
 package config
 
+import "context"
+
 type CacheConfig struct {
 	// CacheLevel there're 2 types of cache and 4 kinds of cache option
 	CacheLevel CacheLevel
@@ -33,6 +35,9 @@ type CacheConfig struct {
 
 	// DebugLogger
 	DebugLogger LoggerInterface
+
+	// Ctx
+	Ctx context.Context
 }
 
 type CacheLevel int

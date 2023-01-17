@@ -4,9 +4,9 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/Pacific73/gorm-cache/data_layer"
-	"github.com/Pacific73/gorm-cache/util"
+	"github.com/thunur/gorm-cache/config"
+	"github.com/thunur/gorm-cache/data_layer"
+	"github.com/thunur/gorm-cache/util"
 	"gorm.io/gorm"
 )
 
@@ -84,9 +84,9 @@ func (c *Gorm2Cache) Init() error {
 	c.Logger = c.Config.DebugLogger
 	c.Logger.SetIsDebug(c.Config.DebugMode)
 
-	err := c.cache.Init(c.Config, prefix)
+	err := c.cache.Init(c.Config, prefix, c.Config.Ctx)
 	if err != nil {
-		c.Logger.CtxError(context.Background(), "[Init] cache init error: %v", err)
+		c.Logger.CtxError(c.Config.Ctx, "[Init] cache init error: %v", err)
 		return err
 	}
 	return nil

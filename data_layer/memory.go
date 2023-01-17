@@ -5,20 +5,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/Pacific73/gorm-cache/util"
 	"github.com/karlseguin/ccache/v2"
+	"github.com/thunur/gorm-cache/config"
+	"github.com/thunur/gorm-cache/util"
 )
 
 type MemoryLayer struct {
 	cache *ccache.Cache
 	ttl   int64
+	ctx   context.Context
 }
 
-func (m *MemoryLayer) Init(conf *config.CacheConfig, prefix string) error {
+func (m *MemoryLayer) Init(conf *config.CacheConfig, prefix string, ctx context.Context) error {
 	c := ccache.New(ccache.Configure().MaxSize(int64(conf.CacheSize)))
 	m.cache = c
 	m.ttl = conf.CacheTTL
+	m.ctx = ctx
 	return nil
 }
 

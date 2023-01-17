@@ -3,12 +3,12 @@ package data_layer
 import (
 	"context"
 
-	"github.com/Pacific73/gorm-cache/config"
-	"github.com/Pacific73/gorm-cache/util"
+	"github.com/thunur/gorm-cache/config"
+	"github.com/thunur/gorm-cache/util"
 )
 
 type DataLayerInterface interface {
-	Init(config *config.CacheConfig, prefix string) error
+	Init(conf *config.CacheConfig, prefix string, ctx context.Context) error
 
 	// read
 	BatchKeyExist(ctx context.Context, keys []string) (bool, error)
