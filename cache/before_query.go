@@ -3,10 +3,11 @@ package cache
 import (
 	"encoding/json"
 	"errors"
-	"github.com/go-redis/redis/v8"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/redis/go-redis/v9"
 
 	"github.com/thunur/gorm-cache/config"
 	"github.com/thunur/gorm-cache/util"

@@ -3,15 +3,16 @@ package testkit
 import (
 	"context"
 	"fmt"
-	"gorm.io/driver/postgres"
 	"os"
 	"testing"
+
+	"gorm.io/driver/postgres"
 
 	"gorm.io/gorm/logger"
 
 	"github.com/thunur/gorm-cache/cache"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/thunur/gorm-cache/config"
 	"gorm.io/gorm"
 )

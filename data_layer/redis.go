@@ -2,8 +2,9 @@ package data_layer
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 
 	"github.com/thunur/gorm-cache/config"
 	"github.com/thunur/gorm-cache/util"
